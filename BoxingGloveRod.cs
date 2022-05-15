@@ -10,6 +10,7 @@ public class BoxingGloveRod : MonoBehaviour
     public new bool enabled;
     public Vector3 punchDirection;
     public float punchStrength;
+    public Timescale timescale;
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -22,20 +23,17 @@ public class BoxingGloveRod : MonoBehaviour
     private void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        timescale = GameObject.FindGameObjectWithTag("Timescale").GetComponent<Timescale>();
+
     }
 
     private void FixedUpdate()
     {
-        if (!enabled && basicButton.triggered)
+        if (timescale.timeState == Timescale.TimeState.Playing && !enabled && basicButton.triggered)
         {
             rigidbody.AddForce(punchDirection * punchStrength);
             enabled = true;
         }
     }
 
-
-    public void Punch()
-    {
-        Debug.Log("Punch");
-    }
 }

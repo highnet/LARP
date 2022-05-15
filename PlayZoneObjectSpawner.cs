@@ -12,6 +12,9 @@ public class PlayZoneObjectSpawner : MonoBehaviour
     public InventoryUI inventoryUI;
     public bool doingHoverPlacement;
     public InventorySlot inventorySlotPlacement;
+    public PlaceableObject currentlySelectedPlaceableObject;
+    public InventoryOutOfBoundsZone inventoryOutOfBoundsZone;
+    public OutOfBoundsZone robotOutOfBoundsZone;
 
     private void Start()
     {
@@ -25,6 +28,9 @@ public class PlayZoneObjectSpawner : MonoBehaviour
         doingHoverPlacement = true;
         inventorySlotPlacement = slot;
         currentlySelected = GameObject.Instantiate(objectToPlace,new Vector3(100f,100f,0f),objectToPlace.transform.rotation,playZoneEntities.transform);
+        currentlySelectedPlaceableObject = currentlySelected.GetComponent<PlaceableObject>();
+        currentlySelectedPlaceableObject.sourceInventorySlot = inventorySlotPlacement;
+
         inventorySlotPlacement.amount--;
         inventoryUI.objectMetaDataNeedsUpdating = true;
     }
@@ -32,12 +38,68 @@ public class PlayZoneObjectSpawner : MonoBehaviour
 
     public void PlaceObject()
     {
+
+        Physics.SyncTransforms();
+
+        BoxCollider currentlySelectedBoxCollider = currentlySelected.GetComponent<BoxCollider>();
+
+        Collider[] collisions = Physics.OverlapBox(currentlySelectedBoxCollider.transform.position + currentlySelectedBoxCollider.center, currentlySelectedBoxCollider.size / 2);
+
+
+        for(int i = 0; i < collisions.Length; i++)
+        {
+            PlaceableObject collisionPlaceableObject = collisions[i].GetComponent<PlaceableObject>();
+
+            if (collisionPlaceableObject != null && collisionPlaceableObject != currentlySelectedPlaceableObject) {
+                return;
+            }
+
+        }
+
         if (doingHoverPlacement)
         {
-            objectTrajectoryTracker.playZoneEntityTrajectoryRecorders.Add(currentlySelected.GetComponentInChildren<TrajectoryRecorder>());
+            TrajectoryRecorder[] trajectoryRecorders = currentlySelected.GetComponentsInChildren<TrajectoryRecorder>();
+
+            for(int i = 0; i < trajectoryRecorders.Length; i++)
+            {
+                objectTrajectoryTracker.playZoneEntityTrajectoryRecorders.Add(trajectoryRecorders[i]);
+            }
+
+            inventorySlotPlacement = null;
+
             doingHoverPlacement = false;
+
+        }
+
+        if (currentlySelectedPlaceableObject != null)
+        {
+            currentlySelectedPlaceableObject.ResetHighlight();
         }
         currentlySelected = null;
+        currentlySelectedPlaceableObject = null;
+    }
+
+    public void DeleteObject(GameObject gameObjectToDestroy)
+    {
+        if (doingHoverPlacement)
+        {
+            doingHoverPlacement = false;
+        }
+
+        if (currentlySelectedPlaceableObject != null)
+        {
+            if (currentlySelectedPlaceableObject.sourceInventorySlot != null)
+            {
+                currentlySelectedPlaceableObject.sourceInventorySlot.amount++;
+                inventoryUI.objectMetaDataNeedsUpdating = true;
+            }
+        }
+
+
+
+        GameObject.Destroy(currentlySelected);
+        currentlySelected = null;
+        inventorySlotPlacement = null;
     }
 
 
@@ -52,7 +114,7 @@ public class PlayZoneObjectSpawner : MonoBehaviour
 
             if (currentlySelected != null)
             {
-                if (mousePos.x > 0 && mousePos.x < 750 && mousePos.y > 0 && mousePos.y < 530)
+                if (!inventoryOutOfBoundsZone.enabled && !robotOutOfBoundsZone.enabled)
                 {
                     currentlySelected.transform.position = worldPosition;
                 }
@@ -60,17 +122,21 @@ public class PlayZoneObjectSpawner : MonoBehaviour
                 {
                     currentlySelected.transform.position = new Vector3(100f, 100f, 0f);
                 }
+
+                if (currentlySelectedPlaceableObject != null)
+                {
+                    currentlySelectedPlaceableObject.HighLightOutline();
+                    currentlySelected.transform.Rotate(currentlySelectedPlaceableObject.rotationVector * 5f * Input.mouseScrollDelta.y, Space.Self);
+
+                }
+
                 Physics.SyncTransforms();
             }
 
-            if (currentlySelected != null && doingHoverPlacement && Input.GetKey(KeyCode.Escape))
+            if (currentlySelected != null && Input.GetKey(KeyCode.Escape))
             {
 
-                doingHoverPlacement = false;
-                inventorySlotPlacement.amount++;
-                inventoryUI.objectMetaDataNeedsUpdating = true;
-                GameObject.Destroy(currentlySelected);
-                currentlySelected = null;
+                DeleteObject(currentlySelected);
 
             }
         }

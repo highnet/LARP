@@ -24,6 +24,8 @@ public class ObjectTrajectoryTracker : MonoBehaviour
         for (int i = 0; i < playZoneEntityTrajectoryRecorders.Count; i++)
         {
             playZoneEntityTrajectoryRecorders[i].backtracking = true;
+            playZoneEntityTrajectoryRecorders[i].EnableTrail();
+
         }
     }
 

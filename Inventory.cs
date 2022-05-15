@@ -18,12 +18,36 @@ public class Inventory : MonoBehaviour
         {
             case "Developer Test Scene":
 
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[0]);
+                amounts.Add(99);
+
                 objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[1]);
-                amounts.Add(1);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[2]);
+                amounts.Add(99);
+
                 objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[3]);
-                amounts.Add(2);
-                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[17]);
-                amounts.Add(3);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[4]);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[5]);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[6]);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[7]);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[8]);
+                amounts.Add(99);
+
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[9]);
+                amounts.Add(99);
+
                 break;
         }
         inventoryUI.UpdateInventoryObjects();

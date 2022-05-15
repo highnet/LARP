@@ -10,17 +10,21 @@ public class Timescale : MonoBehaviour
     public ObjectTrajectoryTracker objectTrajectoryTracker;
     public TimeState timeState;
     public float secondsinPlay;
+    public PlayZoneObjectSpawner playZoneObjectSpawner;
 
     private void Start()
     {
         timeState = TimeState.Paused;
         Time.timeScale = 0.0f;
         objectTrajectoryTracker = GameObject.FindGameObjectWithTag("Object Trajectory Tracker").GetComponent<ObjectTrajectoryTracker>();
+        playZoneObjectSpawner = GameObject.FindGameObjectWithTag("Play Zone Object Spawner").GetComponent<PlayZoneObjectSpawner>();
+
     }
 
     public void Play()
     {
         if (timeState == TimeState.Backtracking) return;
+        if (playZoneObjectSpawner.doingHoverPlacement) return;
         Time.timeScale = 1.0f;
 
         timeState = TimeState.Playing;
@@ -32,7 +36,7 @@ public class Timescale : MonoBehaviour
         if (timeState == TimeState.Backtracking || timeState == TimeState.Paused) return;
 
         
-        Time.timeScale = Mathf.Max( secondsinPlay / 2.0f , 2.0f);
+        Time.timeScale = Mathf.Min(10, Mathf.Max(secondsinPlay , 2.0f));
         secondsinPlay = 0;
 
 

@@ -9,6 +9,7 @@ public class TrajectoryRecorder : MonoBehaviour
     public List<Quaternion> rotations;
     public Timescale timescale;
     public new Rigidbody rigidbody;
+    public TrailRenderer trailRenderer;
 
     public bool backtracking;
 
@@ -18,6 +19,28 @@ public class TrajectoryRecorder : MonoBehaviour
         rotations = new List<Quaternion>();
         timescale = GameObject.FindGameObjectWithTag("Timescale").GetComponent<Timescale>();
         rigidbody = GetComponent<Rigidbody>();
+        trailRenderer = GetComponent<TrailRenderer>();
+    }
+
+    public void EnableTrail()
+    {
+
+        if (trailRenderer != null)
+        {
+
+            trailRenderer.enabled = true;
+            trailRenderer.emitting = true;
+        }
+    }
+
+    public void DisableTrail()
+    {
+        if (trailRenderer != null)
+        {
+            trailRenderer.emitting = false;
+            trailRenderer.Clear();
+            trailRenderer.enabled = false;
+        }
     }
 
     public void AppendPosition()
@@ -46,32 +69,34 @@ public class TrajectoryRecorder : MonoBehaviour
                 rigidbody.angularVelocity = Vector3.zero;
             }
 
-
             if (positions.Count - 1 > 0)
             {
                 transform.position = positions[positions.Count - 1];
-                positions.RemoveAt(positions.Count - 1);
-            }
-            else if (positions.Count == 1)
-            {
-                transform.position = positions[0];
-                backtracking = false;
-            }
-
-
-            if (rotations.Count - 1 > 0)
-            {
                 transform.rotation = rotations[rotations.Count - 1];
+
+                positions.RemoveAt(positions.Count - 1);
                 rotations.RemoveAt(rotations.Count - 1);
             }
-            else if (rotations.Count == 1)
+            else if (backtracking && positions.Count == 1)
             {
-                transform.rotation = rotations[0];
+                transform.position = positions[0];
+
+                if (this.tag == "Boxing Glove")
+                {
+                    GetComponent<BoxingGloveRod>().enabled = false;
+                }
+                else if (this.tag == "Trap Door")
+                {
+                    rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+                    GetComponentInParent<TrapDoor>().activated = false;
+                    GetComponentInParent<TrapDoor>().armed = false;
+
+                }
+
                 backtracking = false;
+                DisableTrail();
             }
-        }
-
-
+            }
 
 
     }
