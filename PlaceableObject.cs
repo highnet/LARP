@@ -24,6 +24,7 @@ public class PlaceableObject : MonoBehaviour
     {
         if (outline != null)
         {
+            outline.enabled = true;
             outline.OutlineWidth = 10f;
         }
 
@@ -34,6 +35,7 @@ public class PlaceableObject : MonoBehaviour
         if (outline != null)
         {
             outline.OutlineWidth = 0f;
+            outline.enabled = false;
 
         }
 

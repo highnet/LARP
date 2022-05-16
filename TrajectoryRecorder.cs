@@ -6,20 +6,25 @@ public class TrajectoryRecorder : MonoBehaviour
 {
 
     public List<Vector3> positions;
-    public List<Quaternion> rotations;
+    public List<Vector3> rotations;
     public Timescale timescale;
     public new Rigidbody rigidbody;
     public TrailRenderer trailRenderer;
 
     public bool backtracking;
 
+
     private void Start()
     {
         positions = new List<Vector3>();
-        rotations = new List<Quaternion>();
+        rotations = new List<Vector3>();
         timescale = GameObject.FindGameObjectWithTag("Timescale").GetComponent<Timescale>();
         rigidbody = GetComponent<Rigidbody>();
         trailRenderer = GetComponent<TrailRenderer>();
+
+        StartCoroutine("RecordPositionAndRotation");
+        StartCoroutine("BackTrackTrajectory");
+
     }
 
     public void EnableTrail()
@@ -49,55 +54,115 @@ public class TrajectoryRecorder : MonoBehaviour
     }
     public void AppendRotation()
     {
-        rotations.Add(transform.rotation);
+        rotations.Add(transform.rotation.eulerAngles);
     }
 
-    private void FixedUpdate()
+    public void ResetObjectStates()
     {
-        if (timescale.timeState == Timescale.TimeState.Playing)
+
+        if (this.tag == "Boxing Glove")
         {
-            positions.Add(transform.position);
-            rotations.Add(transform.rotation);
+            GetComponent<BoxingGloveRod>().enabled = false;
         }
-
-
-        if (timescale.timeState == Timescale.TimeState.Backtracking)
+        else if (this.tag == "Trap Door")
         {
-            if (rigidbody != null)
+            rigidbody.constraints = RigidbodyConstraints.FreezePosition;
+            GetComponentInParent<TrapDoor>().activated = false;
+            GetComponentInParent<TrapDoor>().armed = false;
+        }
+        else if (this.tag == "Pinball Flipper")
+        {
+            GetComponent<PinballFlipper>().hingeJoint.useMotor = false;
+        }
+        else if (this.tag == "Candle Stick")
+        {
+            Candle candle = GetComponent<Candle>();
+
+            candle.fire.Clear();
+            candle.fireSparks.Clear();
+            if (candle.beginLit)
             {
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.angularVelocity = Vector3.zero;
+                candle.ExtinguishCandle(true);
+                candle.LightCandle();
             }
-
-            if (positions.Count - 1 > 0)
+            else
             {
-                transform.position = positions[positions.Count - 1];
-                transform.rotation = rotations[rotations.Count - 1];
+                candle.ExtinguishCandle(true);
 
-                positions.RemoveAt(positions.Count - 1);
-                rotations.RemoveAt(rotations.Count - 1);
             }
-            else if (backtracking && positions.Count == 1)
+        }
+        else if (this.tag == "Moving Platform")
+        {
+            GetComponent<MovingPlatform>().time = 0;
+            GetComponent<MovingPlatform>().contacts = new List<GameObject>();
+        }
+        else if (this.tag == "Dynamite Stick")
+        {
+            Dynamite dynamite = GetComponent<Dynamite>();
+
+            dynamite.fire.Clear();
+            dynamite.fireSparks.Clear();
+            if (dynamite.beginLit)
             {
-                transform.position = positions[0];
-
-                if (this.tag == "Boxing Glove")
-                {
-                    GetComponent<BoxingGloveRod>().enabled = false;
-                }
-                else if (this.tag == "Trap Door")
-                {
-                    rigidbody.constraints = RigidbodyConstraints.FreezePosition;
-                    GetComponentInParent<TrapDoor>().activated = false;
-                    GetComponentInParent<TrapDoor>().armed = false;
-
-                }
-
-                backtracking = false;
-                DisableTrail();
+                dynamite.ExtinguishDynamite(true);
+                dynamite.LightDynamite();
             }
+            else
+            {
+                dynamite.ExtinguishDynamite(true);
+
             }
-
-
+        }
     }
+
+    public IEnumerator RecordPositionAndRotation()
+    {
+        while (true)
+        {
+            if (timescale.timeState == Timescale.TimeState.Playing)
+            {
+                positions.Add(transform.position);
+                rotations.Add(transform.rotation.eulerAngles);
+            }
+            yield return new WaitForSeconds(.1f);
+
+        }
+    }
+
+    public IEnumerator BackTrackTrajectory()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(.1f);
+
+            if (timescale.timeState == Timescale.TimeState.Backtracking)
+            {
+                if (rigidbody != null)
+                {
+                    rigidbody.velocity = Vector3.zero;
+                    rigidbody.angularVelocity = Vector3.zero;
+                }
+
+                if (positions.Count - 1 > 0)
+                {
+                    transform.position = positions[positions.Count - 1];
+                    transform.localEulerAngles = rotations[rotations.Count - 1];
+
+                    positions.RemoveAt(positions.Count - 1);
+                    rotations.RemoveAt(rotations.Count - 1);
+                }
+                else if (backtracking && positions.Count == 1)
+                {
+                    transform.position = positions[0];
+                    transform.localEulerAngles = rotations[0];
+                    ResetObjectStates();
+                    DisableTrail();
+
+                    backtracking = false;
+                }
+            }
+
+        }
+    }
+
 }

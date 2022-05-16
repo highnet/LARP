@@ -25,6 +25,18 @@ public class ObjectTrajectoryTracker : MonoBehaviour
         {
             playZoneEntityTrajectoryRecorders[i].backtracking = true;
             playZoneEntityTrajectoryRecorders[i].EnableTrail();
+        }
+    }
+
+    public void PrepareObjectsForPlaying()
+    {
+        Debug.Log("yo");
+
+        for (int i = 0; i < playZoneEntityTrajectoryRecorders.Count; i++)
+        {
+            playZoneEntityTrajectoryRecorders[i].AppendPosition();
+            playZoneEntityTrajectoryRecorders[i].AppendRotation();
+
 
         }
     }
@@ -45,7 +57,7 @@ public class ObjectTrajectoryTracker : MonoBehaviour
                 for (int i = 0; i < playZoneEntityTrajectoryRecorders.Count; i++)
                 {
                     playZoneEntityTrajectoryRecorders[i].positions = new List<Vector3>();
-                    playZoneEntityTrajectoryRecorders[i].rotations = new List<Quaternion>();
+                    playZoneEntityTrajectoryRecorders[i].rotations = new List<Vector3>();
 
                 }
                 timescale.Pause();
