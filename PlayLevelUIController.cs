@@ -13,7 +13,9 @@ public class PlayLevelUIController : MonoBehaviour
     public TextMeshProUGUI playAndPauseText;
     public Timescale timescale;
     public TextMeshProUGUI rewindingText;
-    public Rotate rewindingRotator; 
+    public Rotate rewindingRotator;
+    public TextMeshProUGUI mouseoverTooltipTitle;
+    public TextMeshProUGUI mouseOverTooltipDescription;
 
 
     private void Start()

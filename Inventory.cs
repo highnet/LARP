@@ -45,7 +45,7 @@ public class Inventory : MonoBehaviour
                 objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[8]);
                 amounts.Add(99);
 
-                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[17]);
+                objects.Add(playZoneObjectSpawner.playZoneObjectPrefabs[16]);
                 amounts.Add(99);
 
                 break;

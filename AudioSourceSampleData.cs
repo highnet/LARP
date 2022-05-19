@@ -28,7 +28,7 @@ public class AudioSourceSampleData : MonoBehaviour
     void Update()
     {
 
-        currentUpdateTime += Time.deltaTime;
+        currentUpdateTime += Time.unscaledDeltaTime;
         if (currentUpdateTime >= updateStep)
         {
             currentUpdateTime = 0f;

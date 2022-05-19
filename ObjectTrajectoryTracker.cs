@@ -57,7 +57,7 @@ public class ObjectTrajectoryTracker : MonoBehaviour
                 for (int i = 0; i < playZoneEntityTrajectoryRecorders.Count; i++)
                 {
                     playZoneEntityTrajectoryRecorders[i].positions = new List<Vector3>();
-                    playZoneEntityTrajectoryRecorders[i].rotations = new List<Vector3>();
+                    playZoneEntityTrajectoryRecorders[i].rotations = new List<Quaternion>();
 
                 }
                 timescale.Pause();

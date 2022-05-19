@@ -23,7 +23,8 @@ public class Laser : MonoBehaviour
         beamRenderer.positionCount = 1;
         beamRenderer.SetPosition(0, emitter.transform.position);
 
-        if (timeScale.timeState == Timescale.TimeState.Playing) { 
+        if (timeScale.timeState == Timescale.TimeState.Playing) 
+        { 
         PropagateLaser(emitter.transform.position, transform.right);
         }
 
