@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fan : MonoBehaviour
+public class Fan : ConnectionPoint
 {
     public new Renderer renderer;
     public Material offMaterial;
     public Material onMaterial;
-    public GameObject connectedTo;
     public float connectionRange;
     public float angularSpeed;
     public bool reversed;
@@ -19,55 +18,47 @@ public class Fan : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TryMakeNewConnections()
     {
-        if (connectedTo != null)
-        {
-            if (connectedTo.GetComponent<Outlet>() != null)
-            {
-                connectedTo.GetComponent<Outlet>().connectedTo = null;
-            }
-            else if (connectedTo.GetComponent<RelayOut>() != null)
-            {
-                connectedTo.GetComponent<RelayOut>().connectedTo = null;
-            }
-        }
-
-        connectedTo = null;
-
         Collider[] colliders = Physics.OverlapSphere(transform.position, connectionRange);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].tag == "Outlet")
             {
                 Outlet outlet = colliders[i].GetComponent<Outlet>();
-                if (connectedTo == null && outlet.connectedTo == null)
-                {
-                    outlet.connectedTo = this.gameObject;
-                    connectedTo = colliders[i].gameObject;
-                }
+                TryMakeNewConnection(outlet);
+
             }
             else if (colliders[i].tag == "Relay Out")
             {
                 RelayOut relayOut = colliders[i].GetComponent<RelayOut>();
-                if (connectedTo == null && relayOut.connectedTo == null && relayOut.relayIn.connectedTo != null)
-                {
-                    relayOut.connectedTo = this.gameObject;
-                    connectedTo = colliders[i].gameObject;
-                }
+                TryMakeNewConnection(relayOut, new bool[] {relayOut.relayIn.connectedTo != null });
+
             }
         }
+    }
 
+    public void UpdateMaterial()
+    {
         if (connectedTo != null)
         {
             renderer.material = onMaterial;
-            transform.Rotate(0f,0f,(reversed ? 1f : -1f) * angularSpeed * Time.deltaTime,Space.Self);
+            transform.Rotate(0f, 0f, (reversed ? 1f : -1f) * angularSpeed * Time.deltaTime, Space.Self);
         }
         else
         {
             renderer.material = offMaterial;
         }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        ResetConnections();
+        TryMakeNewConnections();
+        UpdateMaterial();
+
     }
 }
 

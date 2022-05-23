@@ -2,20 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Outlet : MonoBehaviour
+public class Outlet : ConnectionPoint
 {
-
-    public GameObject connectedTo;
-
     public ParticleSystem electricityConnection;
     public ParticleSystem electricityIdle;
 
     private void Update()
     {
+
+        UpdateElectricityParticleSystems();
+
+    }
+
+    public void UpdateElectricityParticleSystems()
+    {
         if (connectedTo != null)
         {
             electricityConnection.gameObject.transform.LookAt(connectedTo.transform);
-        } else
+        }
+        else
         {
             electricityConnection.gameObject.transform.rotation = Quaternion.identity;
         }

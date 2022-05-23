@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RelayOut : MonoBehaviour
+public class RelayOut : ConnectionPoint
 {
 
-    public GameObject connectedTo;
     public ParticleSystem electricityConnection;
     public RelayIn relayIn;
 
-    private void Update()
+    public void UpdateElectricityParticleSystems()
     {
-
         if (connectedTo != null)
         {
             electricityConnection.gameObject.transform.LookAt(connectedTo.transform);
@@ -20,5 +18,12 @@ public class RelayOut : MonoBehaviour
         {
             electricityConnection.gameObject.transform.rotation = Quaternion.identity;
         }
+    }
+
+    private void Update()
+    {
+
+        UpdateElectricityParticleSystems();
+
     }
 }
