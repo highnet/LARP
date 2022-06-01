@@ -113,6 +113,13 @@ public class TrajectoryRecorder : MonoBehaviour
 
             }
         }
+        else if (this.tag == "Switch")
+        {
+            Switch @switch = GetComponent<Switch>();
+            @switch.enabled = false;
+            @switch.meshCollider.isTrigger = false;
+
+        }
     }
 
     public IEnumerator RecordPositionAndRotation()

@@ -95,7 +95,11 @@ public class PlayZoneObjectSpawner : MonoBehaviour
             }
         }
 
-        objectTrajectoryTracker.playZoneEntityTrajectoryRecorders.Remove(currentlySelected.GetComponentInChildren<TrajectoryRecorder>());
+
+        foreach (TrajectoryRecorder tr in currentlySelected.GetComponentsInChildren<TrajectoryRecorder>())
+        {
+            objectTrajectoryTracker.playZoneEntityTrajectoryRecorders.Remove(tr);
+        }
 
         GameObject.Destroy(currentlySelected);
         currentlySelected = null;
