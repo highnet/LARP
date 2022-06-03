@@ -30,14 +30,12 @@ public class Bumper : MonoBehaviour
 
     private void Update()
     {
-
         if (bumpTimer < 0)
         {
             bumpTimer = 0;
         } else
         {
             bumpTimer -= Time.unscaledDeltaTime;
-
         }
     }
 }
