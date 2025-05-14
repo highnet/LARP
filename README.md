@@ -118,8 +118,7 @@ For help or questions, open an issue in this repository or contact the maintaine
 
 ## Contact
 
-- Main Maintainer: [Your Name](mailto:your.email@example.com)
-- GitHub Issues: https://github.com/yourusername/LARP/issues
+- joaquintelleria@gmail.com
 
 ## Acknowledgements
 
